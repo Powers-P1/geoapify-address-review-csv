@@ -1,0 +1,15 @@
+{
+  "fixture_type": "synthetic",
+  "notice": "Hand-authored fictional schema fixtures; not provider responses, real addresses or accuracy evidence. Coordinates are arbitrary ocean points.",
+  "responses": {
+    "12 Example Road, Sampletown": { "results": [
+      { "formatted": "12 Example Road, Sampletown", "country_code": "zz", "postcode": "00001", "city": "Sampletown", "housenumber": "12", "lat": 0.01, "lon": 0.01, "result_type": "building", "rank": { "confidence": 0.99, "match_type": "full_match" } },
+      { "formatted": "Example Road, Other Sampletown", "country_code": "zz", "postcode": "00002", "city": "Other Sampletown", "lat": 0.02, "lon": 0.02, "result_type": "street", "rank": { "confidence": 0.7, "match_type": "match_by_street" } }
+    ] },
+    "Example Road, Sampletown": { "results": [
+      { "formatted": "Example Road, Sampletown", "country_code": "zz", "city": "Sampletown", "lat": 0.03, "lon": 0.03, "result_type": "street", "rank": { "confidence": 0.88, "match_type": "match_by_street" } },
+      { "formatted": "Example Road, Sampletown District", "country_code": "zz", "city": "Sampletown District", "lat": 0.04, "lon": 0.04, "result_type": "street", "rank": { "confidence": 0.86, "match_type": "match_by_street" } }
+    ] },
+    "Unknown Example": { "results": [] }
+  }
+}

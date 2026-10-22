@@ -1,0 +1,11 @@
+{
+  "name": "address-review-csv",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A human-review queue for CSV address geocoding with Geoapify",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "bin": { "address-review-csv": "src/cli.js" },
+  "scripts": { "test": "node --test", "demo": "node src/cli.js --input examples/addresses.csv --output demo-review.csv --offline examples/synthetic-responses.json" }
+}
