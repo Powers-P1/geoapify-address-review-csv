@@ -2,7 +2,14 @@ node_modules/
 .env
 .env.*
 !.env.example
-*-review.csv
-*-review.csv.summary.json
+# Local address inputs and exports must never be published accidentally.
+*.csv
+*.csv.summary.json
+*.summary.json
+local-data/
+output/
+# Keep the reviewed, synthetic teaching examples versioned.
+!examples/addresses.csv
+!examples/synthetic-responses.json
 coverage/
 .test-tmp-*/

@@ -2,15 +2,28 @@
 export function parseCsv(text) {
   text = text.replace(/^\uFEFF/, '');
   if (text.includes('\0')) throw new Error('CSV contains NUL');
-  const rows = []; let row = [], cell = '', quoted = false, closed = false;
-  const pushCell = () => { row.push(cell); cell = ''; closed = false; };
-  const pushRow = () => { pushCell(); rows.push(row); row = []; };
+  const rows = [];
+  let row = [], cell = '', quoted = false, closed = false;
+  const pushCell = () => {
+    row.push(cell);
+    cell = '';
+    closed = false;
+  };
+  const pushRow = () => {
+    pushCell();
+    rows.push(row);
+    row = [];
+  };
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (quoted) {
-      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
-      else if (c === '"') { quoted = false; closed = true; }
-      else cell += c;
+      if (c === '"' && text[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else if (c === '"') {
+        quoted = false;
+        closed = true;
+      } else cell += c;
     } else if (c === ',') pushCell();
     else if (c === '\n' || c === '\r') {
       if (c === '\r' && text[i + 1] === '\n') i++;
@@ -38,5 +51,7 @@ function safeCell(value) {
   return '"' + s.replaceAll('"', '""') + '"';
 }
 export function writeCsv(headers, records) {
-  return [headers, ...records.map(r => headers.map(h => r[h]))].map(row => row.map(safeCell).join(',')).join('\r\n') + '\r\n';
+  return [headers, ...records.map(r => headers.map(h => r[h]))]
+    .map(row => row.map(safeCell).join(','))
+    .join('\r\n') + '\r\n';
 }

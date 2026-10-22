@@ -48,6 +48,10 @@ node src/cli.js --input addresses.csv --address-column shipping_address --output
 
 Live input addresses are sent to Geoapify. Use only data you are authorised to process. Input/output files can contain personal data: store them privately, restrict access and follow an appropriate retention policy. Included examples contain no client data.
 
+Local `*.csv` inputs, `*.summary.json` exports and the `local-data/` and `output/` directories are ignored by Git. The reviewed `examples/addresses.csv` is explicitly retained, along with the synthetic response fixture. Prefer keeping private working data under `local-data/`; create that directory yourself before using it as an output parent. Ignore rules reduce accidental additions but do not protect already tracked files or `git add --force`. Check the staged files before every publication. Never replace a tracked synthetic example with client data.
+
+Missing files produce distinct `Input file not found` and `Offline fixture file not found` messages without echoing paths. Both stop before network activity. Encoding, JSON syntax and permission failures continue to use a generic safe message.
+
 ## Reading the queue
 
 Each candidate gets its own row in provider order. `candidate_rank` describes that order, not an endorsement. An empty address, empty result or failed lookup produces one visible review row instead of disappearing.
@@ -82,3 +86,7 @@ Cells beginning with spreadsheet formula triggers, including whitespace before `
 Original source, hand-authored synthetic fixtures and documentation are [MIT licensed](LICENSE). The licence does not relicense Geoapify responses, OpenStreetMap data or third-party sources. Live results stay outside this package; preserve their returned datasource notices and comply with applicable upstream terms when sharing data. See [THIRD_PARTY.md](THIRD_PARTY.md) for the official sources consulted and [the tutorial](docs/TUTORIAL.md) for the build walkthrough. The [prompt and correction log](docs/PROMPT_CORRECTION_LOG.md) records AI assistance and actual implementation decisions.
 
 This version is a CLI core, with no web UI or asynchronous Batch API integration. Live smoke checks establish transport/schema compatibility only; they do not measure accuracy, account balance, daily quota or future availability. Review public package contents before publication; do not publish real `.env`, customer CSVs or live output.
+
+## Continuous integration
+
+The included GitHub Actions workflow is configured for Windows/Linux and Node.js 22/24. Each job runs the offline suite and synthetic demo with read-only repository permissions, SHA-pinned official actions, no configured secrets and no dependency cache. It uses standard hosted runners, with no paid or larger runner configuration. The checkout and Node setup need GitHub/network access; the tests and demo make no provider requests. Configuration alone is not evidence of successful runs: inspect the repository's Actions results after a push. The optional Git ignore-regression test is skipped if Git is unavailable; the CLI itself requires only Node.

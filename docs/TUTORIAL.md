@@ -10,6 +10,20 @@ Use Node.js 22+ and this package's source directory. Run `npm test`, then `npm r
 
 The five invented input records deliberately cover an exact candidate, street-level ambiguity, no match, a blank address and a repeated query with a conflicting expected postcode. Eight output rows represent all candidates plus visible placeholder rows. These are synthetic examples, not a performance benchmark. The postcode conflict matters: the second use of an address reuses the response but runs the input checks again.
 
+### A worked review of three exported rows
+
+These are actual selected fields from the synthetic demo export, not live provider results. Candidate 1 for `demo-1` and `demo-5` describes the same invented address with postcode `00001`; the two input records deliberately disagree about the expected postcode.
+
+| input.id | candidate_rank | input.postcode | postcode | review_status | review_reasons |
+| --- | --- | --- | --- | --- | --- |
+| demo-1 | 1 | 00001 | 00001 | ready_for_review | human_confirmation_required |
+| demo-5 | 1 | 99999 | 00001 | review_required | postcode_mismatch |
+| demo-3 | (empty) | (empty) | (empty) | review_required | no_candidates |
+
+For `demo-1`, a reviewer would compare candidate 1 with the original source and the other returned candidate, then record a choice only if independent context confirms it. For `demo-5`, defer the choice and resolve whether `99999` in the input or `00001` in the candidate is the correct intended postcode; reusing a response does not resolve that conflict. For `demo-3`, request a complete address or correct the source before a deliberate later lookup.
+
+Record these dispositions in a separate private review sheet using the stable `input.id` to join back to the original records. For a selected candidate, also record its rank within that particular export. These are proposed human actions, not decisions performed by the demo or CLI: no row is automatically accepted and no source address is overwritten.
+
 ## 2. Preserve the input before asking the provider
 
 `src/csv.js` handles quoted commas, doubled quotes and multiline cells. It rejects malformed rows rather than trying to repair them silently. `src/cli.js` validates UTF-8, the address column, numeric options, destination availability and input size before processing. `src/destination.js` checks parent directories and uses a temporary create/write/delete probe before any lookup; final exclusive writes still protect against overwrites. Choose a new output filename on every run; original input is never overwritten.
