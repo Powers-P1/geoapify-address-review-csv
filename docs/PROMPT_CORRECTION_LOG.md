@@ -62,3 +62,11 @@ The complete earlier log above is preserved as historical evidence. Its statemen
 - Documented candidate row multiplication and memory limitations, and added a stable tutorial link to `main` while retaining relative documentation links.
 
 Local verification on 23 October 2026 passed all 21 offline tests, including the three new bounded regressions, and the synthetic demo produced 8 review rows from 5 input records with zero automatically accepted results. No live API requests were made. Hosted CI, the final public revision and the main-branch tutorial link are release checks recorded in the dated verification update below; local checks alone do not establish those remote results. Organizer review and final acceptance remain pending.
+
+### Release verification - 23 October 2026
+
+The corrected functional revision `56109e97a56808bbf32619ebcdec37d08658fb75` is published on `main`, now the repository's default branch. Existing commits and the original journal are preserved. The README links to the [main-branch tutorial](https://github.com/Powers-P1/geoapify-address-review-csv/blob/main/docs/TUTORIAL.md); its public URL and contents were verified on 23 October 2026.
+
+[Hosted verification run 39942589782](https://github.com/Powers-P1/geoapify-address-review-csv/actions/runs/39942589782) completed successfully at 2026-10-23T10:57:07Z. All four combinations of Ubuntu/Windows and Node.js 22/24 passed all 21 offline tests with zero failures or skips. Each also ran the synthetic demo: 5 input records, 8 review rows and zero automatically accepted results. These checks made no live Geoapify requests. This dated evidence note is a documentation-only follow-up to that tested functional revision.
+
+Organizer review is in progress. These technical checks do not constitute final program acceptance, a sponsorship award or an invoice.
