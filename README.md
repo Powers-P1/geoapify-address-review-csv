@@ -25,7 +25,7 @@ id,address,country_code,postcode,city,housenumber
 demo-1,"12 Example Road, Sampletown",zz,00001,Sampletown,12
 ```
 
-Other columns are preserved as `input.<original header>` in every candidate row. Postcodes and IDs remain strings. A record number starts at 2 and counts logical CSV records, including quoted multiline fields; it is not a physical line number. Quoted commas, quotes, newlines, CRLF, LF and a UTF-8 BOM are supported. Duplicate or empty headers, incorrect field counts, invalid quotes, NUL and invalid UTF-8 fail before any API call. Blank records are subject to the same strict field-count check. Maximum input size is 10 MiB. Semicolon/TSV, XLSX, automatic delimiter detection and structured geocoding are outside this version.
+Other columns are preserved as `input.<original header>` in every candidate row. Postcodes and IDs remain strings. A record number starts at 2 and counts logical CSV records, including quoted multiline fields; it is not a physical line number. Quoted commas, quotes, newlines, CRLF, LF and a UTF-8 BOM are supported. Duplicate or empty headers, incorrect field counts, invalid quotes, NUL and invalid UTF-8 fail before any API call. Blank records are subject to the same strict field-count check. Input has two independent hard limits: 10 MiB of bytes and 10,000 data records, excluding the header. Duplicate and blank records each count toward the record limit. The parser rejects the first excess record while collecting rows, before any lookup. These limits apply in both offline and live mode. Semicolon/TSV, XLSX, automatic delimiter detection and structured geocoding are outside this version.
 
 ## Live use
 
@@ -39,7 +39,7 @@ node --env-file=.env src/cli.js --input addresses.csv --output first-review.csv 
 
 Requests run sequentially with a minimum one-second gap, a 15-second timeout and no retries. Redirects are rejected. The fixed endpoint is `https://api.geoapify.com/v1/geocode/search`, using `format=json`, `lang=en`, `bias=countrycode:none` and a candidate limit of 3. Addresses are trimmed for lookup and deduplicated exactly, case sensitively, within one run. Original input values remain attached to each row. No persistent response cache is written.
 
-The default cap is 10 unique, nonempty addresses. A larger file fails before sending anything unless an appropriate `--max-requests` is explicitly provided (1-1000). This is a guardrail, not permission to spend or exceed an account allocation. `--limit` accepts 1-5 candidates; reducing it can conceal alternative matches. The provider can return fewer candidates than requested.
+The default cap is 10 unique, nonempty addresses. More unique addresses fail before sending anything unless an appropriate `--max-requests` is explicitly provided (1-1000); this option does not raise either hard input limit. This is a guardrail, not permission to spend or exceed an account allocation. `--limit` accepts 1-5 candidates; reducing it can conceal alternative matches. The provider can return fewer candidates than requested. At most five candidate rows per input record bound output multiplication to 50,000 data rows per run, including one placeholder row for records without candidates. Input, responses and exports are held in memory; the limits do not guarantee a fixed RAM footprint.
 
 ```sh
 node src/cli.js --help
@@ -59,7 +59,8 @@ Each candidate gets its own row in provider order. `candidate_rank` describes th
 | Signal | Reason emitted |
 | --- | --- |
 | Overall confidence below 0.90 | `low_confidence` |
-| Missing, nonnumeric or out-of-range confidence | `confidence_missing_or_invalid` |
+| Missing/null or numeric confidence outside 0-1 | `confidence_missing_or_invalid` |
+| Nonnumeric confidence (for example a string or object) | `invalid_provider_response` |
 | Missing or out-of-range latitude/longitude | `coordinates_missing_or_invalid` |
 | Result type other than building or amenity | `coarse_result` |
 | Match type other than full match | `not_full_match` |
@@ -83,7 +84,7 @@ Cells beginning with spreadsheet formula triggers, including whitespace before `
 
 ## Licence and provenance
 
-Original source, hand-authored synthetic fixtures and documentation are [MIT licensed](LICENSE). The licence does not relicense Geoapify responses, OpenStreetMap data or third-party sources. Live results stay outside this package; preserve their returned datasource notices and comply with applicable upstream terms when sharing data. See [THIRD_PARTY.md](THIRD_PARTY.md) for the official sources consulted and [the tutorial](docs/TUTORIAL.md) for the build walkthrough. The [prompt and correction log](docs/PROMPT_CORRECTION_LOG.md) records AI assistance and actual implementation decisions.
+Original source, hand-authored synthetic fixtures and documentation are [MIT licensed](LICENSE). The licence does not relicense Geoapify responses, OpenStreetMap data or third-party sources. Live results stay outside this package; preserve their returned datasource notices and comply with applicable upstream terms when sharing data. See [THIRD_PARTY.md](THIRD_PARTY.md) for the official sources consulted and [the tutorial](docs/TUTORIAL.md) for the build walkthrough ([stable main link](https://github.com/Powers-P1/geoapify-address-review-csv/blob/main/docs/TUTORIAL.md)). The [prompt and correction log](docs/PROMPT_CORRECTION_LOG.md) records AI assistance and actual implementation decisions.
 
 This version is a CLI core, with no web UI or asynchronous Batch API integration. Live smoke checks establish transport/schema compatibility only; they do not measure accuracy, account balance, daily quota or future availability. Review public package contents before publication; do not publish real `.env`, customer CSVs or live output.
 

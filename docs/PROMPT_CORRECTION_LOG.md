@@ -47,3 +47,18 @@ The following excerpt is copied verbatim from the actual coordinator repair inst
 - Clean-copy verification, package inventory and final test evidence are provided separately to the coordinator. A local clean copy is not a claim that a public repository already exists or has been cloned.
 
 After corrections 9-12, independent agent re-review passed and the coordinator verified a real remote fresh clone, then published that reviewed revision. A subsequent fresh professional review found no material code blocker and identified the delivery polish addressed in corrections 13-15. Those new changes require the coordinator's final verification and push; configured hosted CI is not yet an observed result. The earlier pre-publication review-pending state is historical. No human code review or approval is claimed. AI assistance is disclosed here; no measured hours, client acceptance, sponsorship earnings or accuracy results are claimed.
+## Release corrections - 23 October 2026
+
+The complete earlier log above is preserved as historical evidence. Its statements that hosted CI was still pending describe that earlier point in development. Subsequently, the prior revision's 18 offline tests and four Windows/Linux, Node.js 22/24 CI jobs were observed passing on 22 October 2026 at 18:13:48 UTC. That historical result does not verify the changes below.
+
+### Actual project-only repair instruction
+
+> Please add a hard limit of 10,000 data records, excluding the header, and enforce it while parsing before any geocoding request. Count blank records and duplicate addresses toward the limit. Reject an oversized file with a clear, safe error and no output or provider call. Add bounded regression tests for the exact limit, one record above it, and the command-line zero-request failure. Document the record limit alongside the existing byte limit.
+
+### Corrections and verification status
+
+- Added the parser's fixed 10,000-data-record limit alongside the existing 10 MiB input limit, with a safe command-line error. The header is excluded; blank and duplicate records count. Added bounded regressions for the exact boundary, excess records and a fake-fetch CLI failure with no provider calls or exports.
+- Corrected the confidence table: nonnumeric provider values are schema failures (`invalid_provider_response`); missing/null or out-of-range numeric values produce `confidence_missing_or_invalid`.
+- Documented candidate row multiplication and memory limitations, and added a stable tutorial link to `main` while retaining relative documentation links.
+
+Local verification on 23 October 2026 passed all 21 offline tests, including the three new bounded regressions, and the synthetic demo produced 8 review rows from 5 input records with zero automatically accepted results. No live API requests were made. Hosted CI, the final public revision and the main-branch tutorial link are release checks recorded in the dated verification update below; local checks alone do not establish those remote results. Organizer review and final acceptance remain pending.

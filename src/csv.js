@@ -10,6 +10,8 @@ export function parseCsv(text) {
     closed = false;
   };
   const pushRow = () => {
+    // The first collected row is the header; every subsequent record counts.
+    if (rows.length > 10_000) throw new Error('Input exceeds 10000 data record limit');
     pushCell();
     rows.push(row);
     row = [];

@@ -101,6 +101,7 @@ main().catch(e => {
     'Input file not found',
     'Offline fixture file not found',
     'Input exceeds 10 MiB limit',
+    'Input exceeds 10000 data record limit',
     'Unique address count exceeds --max-requests; no requests were sent',
     'Offline file must declare fixture_type synthetic and responses',
     'missing_api_key'

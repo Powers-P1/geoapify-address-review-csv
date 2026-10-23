@@ -28,6 +28,8 @@ Record these dispositions in a separate private review sheet using the stable `i
 
 `src/csv.js` handles quoted commas, doubled quotes and multiline cells. It rejects malformed rows rather than trying to repair them silently. `src/cli.js` validates UTF-8, the address column, numeric options, destination availability and input size before processing. `src/destination.js` checks parent directories and uses a temporary create/write/delete probe before any lookup; final exclusive writes still protect against overwrites. Choose a new output filename on every run; original input is never overwritten.
 
+Both offline and live CSV input must fit within 10 MiB and 10,000 data records. The header is excluded from the record count; duplicate and blank records count, and a quoted multiline field remains part of one logical record. The parser rejects the first excess record while collecting rows, before any geocoding. CRLF and LF input use the same limits. The separate unique-address request cap cannot bypass them. This workflow accepts CSV, not XLSX.
+
 Keep a stable ID column so a reviewer can join a chosen candidate back to its source. Optional `country_code`, `postcode`, `city` and `housenumber` are expectations, not query parameters. Put enough locality information in `address` to make the free-text request meaningful.
 
 ## 3. Separate transport from review
@@ -40,11 +42,15 @@ Keep a stable ID column so a reviewer can join a chosen candidate back to its so
 
 `src/review.js` emits all candidates in provider order. A confidence below 0.90, coarse result, non-full match, invalid coordinates, mismatch with an expected field or similarly confident alternative adds a named reason. The 0.90 and 0.05 thresholds are project heuristics, not statistically validated acceptance criteria. The provider's confidence and matching level describe different aspects of a result; use both.
 
+Missing/null confidence or a numeric value outside 0-1 produces `confidence_missing_or_invalid`. A nonnumeric confidence value violates the provider schema and produces `invalid_provider_response` before candidate review.
+
 Even a candidate without these flags has `human_confirmation_required`. The tool does not validate deliverability, building existence or unit numbers, and it does not know the intended location of an ambiguous input. A reviewer compares alternatives and the original record before making a decision outside this CLI. House numbers retain meaningful internal punctuation and spaces: `12-14` cannot become `1214` during comparison. Only Unicode NFKC, lowercase and surrounding-whitespace trimming apply to that field. Transliteration and abbreviated city names can produce false-positive mismatch flags; these require judgment, not a lower threshold applied blindly.
 
 ## 5. Export safely with provenance
 
 Each CSV row repeats original columns under an `input.` prefix, then adds candidate fields, status and reasons. Empty/error results remain visible. Formula-triggering cells are apostrophe-prefixed for safer spreadsheet import. This can make a negative longitude textual; convert it intentionally after review rather than stripping the protection from the entire file.
+
+The candidate limit is at most five per input record, so 10,000 input data records can produce at most 50,000 output data rows; a record without candidates contributes one placeholder row. The implementation holds input, responses and exports in memory. These bounds limit row multiplication without promising a fixed RAM footprint.
 
 The export also retains datasource licence and attribution metadata where supplied, alongside Geoapify/OpenStreetMap notices. A companion summary records policy settings and counts. Code licensing and data licensing are separate: original code is MIT, while provider data remains subject to its source conditions.
 
